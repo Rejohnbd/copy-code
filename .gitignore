@@ -2,3 +2,5 @@ api/vendor
 api/.env
 
 admin/node_modules
+
+frontend/node_modules
