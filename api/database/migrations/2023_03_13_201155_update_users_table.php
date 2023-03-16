@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('user_type')->default('client')->after('password');
             $table->string('avatar')->default('avatar.png')->after('user_type');
             $table->tinyInteger('user_status')->default(1)->after('avatar')->comment('0 = inactive user, 1 = active user, 2 = suspended user');
+            $table->tinyInteger('user_agree')->default(0)->after('user_status')->comment('0 = disagree user, 1 = agree user');
         });
     }
 
@@ -37,6 +38,7 @@ return new class extends Migration
             $table->dropColumn('user_type');
             $table->dropColumn('avatar');
             $table->dropColumn('user_status');
+            $table->dropColumn('user_agree');
         });
     }
 };
