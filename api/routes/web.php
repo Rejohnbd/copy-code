@@ -16,3 +16,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('migrate/{key}', function ($key) {
+    if ($key == 'Rejohn@1234') {
+        try {
+            \Artisan::call('migrate');
+            echo 'Migrated Successfully!';
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+    } else {
+        echo 'Not matched!';
+    }
+});
