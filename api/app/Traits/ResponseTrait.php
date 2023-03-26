@@ -4,6 +4,14 @@ namespace App\Traits;
 
 trait ResponseTrait
 {
+    public function responseSuccess($responseCode, $message, $data = [])
+    {
+        return response()->json([
+            'status'    => true,
+            'message'   => $message,
+            'data'      => $data
+        ], $responseCode);
+    }
     public function responseValidationError($responseCode, $message, $errors = [])
     {
         return response()->json([
