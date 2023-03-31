@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\PersonalAccessTokenResult;
 use Exception;
 use Illuminate\Http\Response as Res;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -103,7 +104,9 @@ class AuthController extends Controller
                 $expiresAt = Carbon::parse($tokenInstance->token->expires_at)->toDateTimeString();
                 try {
                     // throw new Exception("Error Proceesing Request", 1);
-                    return $this->responseWithToken(Res::HTTP_OK, $tokenInstance->accessToken, $user, $expiresAt);
+                    $cookie = cookie('token', $tokenInstance->accessToken, 60 * 24);
+                    // dd($cookie);
+                    return $this->responseWithToken(Res::HTTP_OK, $tokenInstance->accessToken, $user, $expiresAt)->withCookie($cookie);
                 } catch (Exception $e) {
                     return $this->resposeWithExpectationFailed(Res::HTTP_EXPECTATION_FAILED, $e->getMessage());
                 }
@@ -111,6 +114,31 @@ class AuthController extends Controller
                 return $this->responseError(Res::HTTP_UNAUTHORIZED, 'Sorry Invalid Email and Password');
             endif;
         endif;
+    }
+
+    public function user()
+    {
+        $user = Auth::user();
+        // $tokenInstance = $this->getAuthToken($user);
+        // $expiresAt = $this->getExpiresAt($tokenInstance);
+        $tokenInstance = $user->createToken('authToken');
+        $expiresAt = Carbon::parse($tokenInstance->token->expires_at)->toDateTimeString();
+        try {
+            // throw new Exception("Error Proceesing Request", 1);
+            return $this->responseWithToken(Res::HTTP_OK, $tokenInstance->accessToken, $user, $expiresAt);
+        } catch (Exception $e) {
+            return $this->resposeWithExpectationFailed(Res::HTTP_EXPECTATION_FAILED, $e->getMessage());
+        }
+    }
+
+    public function logout()
+    {
+        $cookie = Cookie::forget('token');
+        Auth::user()->token()->revoke();
+        return response()->json([
+            'status'        => 200,
+            'message'       => 'Logged out successfully',
+        ])->withCookie($cookie);
     }
 
     // public function getAuthToken(User $user)

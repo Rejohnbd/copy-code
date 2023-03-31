@@ -1,4 +1,8 @@
 api/vendor
+api/public/item_image
+api/public/hot
+api/public/storage
+api/storage/*.key
 
 admin/node_modules
 
